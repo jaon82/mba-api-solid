@@ -16,7 +16,7 @@ export async function registerController(
 
   try {
     await registerService({ name, email, password });
-  } catch (error) {
+  } catch {
     return reply.status(409).send();
   }
 
