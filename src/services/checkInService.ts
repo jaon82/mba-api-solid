@@ -1,9 +1,14 @@
 import { ICheckInsRepository } from "@/repositories/ICheckInsRepository";
+import { IGymsRepository } from "@/repositories/IGymsRepository";
+import { getDistanceBetweenCoordinates } from "@/utils/getDistanceBetweenCoordinates";
 import { CheckIn } from "@prisma/client";
+import { ResourceNotFoundError } from "./errors/ResourceNotFoundError";
 
 interface CheckInServiceRequest {
   userId: string;
   gymId: string;
+  userLatitude: number;
+  userLongitude: number;
 }
 
 interface CheckInServiceResponse {
@@ -11,12 +16,35 @@ interface CheckInServiceResponse {
 }
 
 export default class CheckInService {
-  constructor(private checkinsRepository: ICheckInsRepository) {}
+  MAX_DISTANCE_IN_KILOMETERS = 0.1;
+
+  constructor(
+    private checkinsRepository: ICheckInsRepository,
+    private gymsRepository: IGymsRepository
+  ) {}
 
   async execute({
     userId,
     gymId,
+    userLatitude,
+    userLongitude,
   }: CheckInServiceRequest): Promise<CheckInServiceResponse> {
+    const gym = await this.gymsRepository.findById(gymId);
+    if (!gym) {
+      throw new ResourceNotFoundError();
+    }
+
+    const distance = getDistanceBetweenCoordinates(
+      { latitude: userLatitude, longitude: userLongitude },
+      {
+        latitude: gym.latitude.toNumber(),
+        longitude: gym.longitude.toNumber(),
+      }
+    );
+    if (distance > this.MAX_DISTANCE_IN_KILOMETERS) {
+      throw new Error();
+    }
+
     const checkInSameDay = await this.checkinsRepository.findByUserIdOnDate(
       userId,
       new Date()
@@ -24,6 +52,7 @@ export default class CheckInService {
     if (checkInSameDay) {
       throw new Error();
     }
+
     const checkIn = await this.checkinsRepository.create({
       user_id: userId,
       gym_id: gymId,
