@@ -1,11 +1,11 @@
 import { InMemoryCheckInsRepository } from "@/repositories/inMemory/CheckInsRepository";
 import { beforeEach, describe, expect, it } from "vitest";
-import { GetUserMetricsService } from "./GetUserMetricsService";
+import { GetUserMetricsService } from "./getUserMetricsService";
 
 let checkInsRepository: InMemoryCheckInsRepository;
 let sut: GetUserMetricsService;
 
-describe("Ger User Metrics Use Case", () => {
+describe("Ger User Metrics Service", () => {
   beforeEach(async () => {
     checkInsRepository = new InMemoryCheckInsRepository();
     sut = new GetUserMetricsService(checkInsRepository);
