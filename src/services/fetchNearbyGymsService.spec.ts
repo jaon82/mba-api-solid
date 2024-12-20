@@ -5,7 +5,7 @@ import { FetchNearbyGymsService } from "./fetchNearbyGymsService";
 let gymsRepository: InMemoryGymsRepository;
 let sut: FetchNearbyGymsService;
 
-describe("Fetch Nearby Gyms Use Case", () => {
+describe("Fetch Nearby Gyms Service", () => {
   beforeEach(async () => {
     gymsRepository = new InMemoryGymsRepository();
     sut = new FetchNearbyGymsService(gymsRepository);
