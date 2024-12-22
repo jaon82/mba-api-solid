@@ -14,15 +14,21 @@ export async function authenticateCrontroller(
   const { email, password } = authenticateBodySchema.parse(request.body);
   try {
     const authenticateService = makeAuthenticateService();
-    await authenticateService.execute({
+    const { user } = await authenticateService.execute({
       email,
       password,
     });
+    const token = await reply.jwtSign(
+      {},
+      {
+        sign: { sub: user.id },
+      }
+    );
+    return reply.status(200).send({ token });
   } catch (err) {
     if (err instanceof InvalidCredentialsError) {
       return reply.status(400).send({ message: err.message });
     }
     throw err;
   }
-  return reply.status(200).send();
 }
