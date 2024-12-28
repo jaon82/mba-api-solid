@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { verifyJWT } from "../../middlewares/verify-jwt";
+import { verifyJWT } from "../../middlewares/verifyJWT";
 import { authenticateCrontroller } from "./authenticateCrontroller";
 import { profileCrontroller } from "./profileCrontroller";
 import { refreshController } from "./refreshController";
